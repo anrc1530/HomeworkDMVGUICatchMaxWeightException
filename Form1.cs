@@ -18,6 +18,8 @@ namespace DMV_GUI
         
         public static string textFile = "log-"+(DateTime.Now.ToString("dd-MM-yyyy"))+".txt"; //Define dynamic time-dependant name of textfile
 
+        public static string backupFolder = @"C:backupFolder";
+
         public Form1()
         {
             InitializeComponent();
@@ -25,13 +27,28 @@ namespace DMV_GUI
 
         private void onLoad(object sender, EventArgs e)
         {
-            VehicleTypeChange(null, null); //Run function to check the default radio button
-
-            if (!File.Exists(textFile)) //Check if our textfile already exists
-            {
-                FileStream fileStream = new FileStream(textFile, FileMode.Create, FileAccess.Write); //Create a new texfile
-                fileStream.Close(); //Close the file, so that other methods can acces it
-            }
+            VehicleTypeChange(null, null); //Run function to check the default radio button 
+            if (!File.Exists(textFile)) //Check if our textfile already exists 
+            { 
+                FileStream fileStream = new FileStream(textFile, FileMode.Create, FileAccess.Write); //Create a new texfile 
+                fileStream.Close(); //Close the file, so that other methods can acces it 
+            } 
+            else 
+            { 
+                if (Directory.Exists(backupFolder)) 
+                { 
+                    File.Move(textFile, backupFolder + "/" + textFile + "-backup.txt"); 
+                    FileStream fileStream = new FileStream(textFile, FileMode.Create, FileAccess.Write); //Create a new texfile 
+                    fileStream.Close(); //Close the file, so that other methods can acces it 
+                } 
+                else 
+                { 
+                    DirectoryInfo dir = Directory.CreateDirectory(backupFolder); 
+                    File.Move(textFile, backupFolder + "/" + textFile + "-backup.txt"); 
+                    FileStream fileStream = new FileStream(backupFolder + "/" + textFile, FileMode.Create, FileAccess.Write); //Create a new texfile 
+                    fileStream.Close(); //Close the file, so that other methods can acces it 
+                } 
+            } 
         }
 
         private void VehicleTypeChange(object sender, EventArgs e) //Method for radio button selector. Displays required fileds for diferent types of motor Vehicles
@@ -127,30 +144,9 @@ namespace DMV_GUI
         
         private void ShowLastVehicleFromFile(object sender, EventArgs e) //Get from textfile and display in Richtextbox
         {
-            using (FileStream fileStream = new FileStream(textFile, FileMode.Open, FileAccess.Read))
-            {
-                using (StreamReader streamReader = new StreamReader(fileStream))
-                {
-                    string allFileLines;
-                    string[] currentLine = new String[20];
-                    int lineCounter = 0;
-
-                    while((allFileLines = streamReader.ReadLine()) != null) {
-                        try
-                        {
-                            currentLine[lineCounter++] = allFileLines;
-                        }
-                        catch
-                        {
-                            break;
-                        }
-                    }
-
-                    rtLog.AppendText(lineCounter.ToString() + ": " + currentLine[lineCounter-1] + "\n\n");
-                    streamReader.Close();
-                }
-                fileStream.Close(); 
-            }        
+            var lines = File.ReadLines(textFile); 
+            string line = lines.Last(); 
+            rtLog.AppendText(line + "\n\n");
         }
 
         private void sortButton_Click(object sender, EventArgs e)
