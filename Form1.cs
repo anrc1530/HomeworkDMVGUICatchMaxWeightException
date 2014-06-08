@@ -38,11 +38,15 @@ namespace DMV_GUI
                 FileStream fileStream = new FileStream(textFile, FileMode.Create, FileAccess.Write); //Create a new texfile 
                 fileStream.Close(); //Close the file, so that other methods can acces it 
             } 
-            else if (Directory.Exists(backupFolder)) 
+            else if (File.Exists(textFile))
             {
-                File.Move(textFile, backupFolder + "/" + textFile + "-backup.txt");
-                FileStream fileStream = new FileStream(textFile, FileMode.Create, FileAccess.Write); //Create a new texfile
-                fileStream.Close(); //Close the file, so that other methods can acces it 
+                if (Directory.Exists(backupFolder))
+                {
+                    File.Move(textFile, backupFolder + "/" + "backup-" + DateTime.Now.ToString("hh.mm.ss") + "-" + textFile);
+                    FileStream fileStream = new FileStream(textFile, FileMode.Create, FileAccess.Write); //Create a new texfile
+                    fileStream.Close(); //Close the file, so that other methods can acces it 
+                }
+            }
         }
 
         /// <summary>
