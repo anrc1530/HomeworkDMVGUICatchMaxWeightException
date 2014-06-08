@@ -28,7 +28,8 @@ namespace DMV_GUI
 
         public virtual string show()
         {
-            return string.Format(" Make: {1} {0} Model: {2} {0} Number of Wheels: {3}", fieldSep, make, model, noOfWheels);
+            return string.Format("VIN: {0} {6} Make: {1} {6} Model: {2} {6} Has {3} wheels {6} Has {4} seats {6} Date of production: {5}"
+                ,VIN, make, model, noOfWheels, noOfSeats, dateOfProduction, fieldSep);
         }
 
         public int CompareTo(MotorVehicle other)
