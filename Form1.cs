@@ -13,7 +13,7 @@ namespace DMV_GUI
 {
     public partial class Form1 : Form
     {
-
+        
         List<MotorVehicle> vehicleList = new List<MotorVehicle> { }; //Define Array of MotorVehicle objects
         
         public static string textFile = "log-"+(DateTime.Now.ToString("dd-MM-yyyy"))+".txt"; //Define dynamic time-dependant name of textfile
@@ -25,6 +25,11 @@ namespace DMV_GUI
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Method for creating a text file when the form is loaded
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void onLoad(object sender, EventArgs e)
         {
             VehicleTypeChange(null, null); //Run function to check the default radio button 
@@ -33,24 +38,18 @@ namespace DMV_GUI
                 FileStream fileStream = new FileStream(textFile, FileMode.Create, FileAccess.Write); //Create a new texfile 
                 fileStream.Close(); //Close the file, so that other methods can acces it 
             } 
-            else 
-            { 
-                if (Directory.Exists(backupFolder)) 
-                { 
-                    File.Move(textFile, backupFolder + "/" + textFile + "-backup.txt"); 
-                    FileStream fileStream = new FileStream(textFile, FileMode.Create, FileAccess.Write); //Create a new texfile 
-                    fileStream.Close(); //Close the file, so that other methods can acces it 
-                } 
-                else 
-                { 
-                    DirectoryInfo dir = Directory.CreateDirectory(backupFolder); 
-                    File.Move(textFile, backupFolder + "/" + textFile + "-backup.txt"); 
-                    FileStream fileStream = new FileStream(backupFolder + "/" + textFile, FileMode.Create, FileAccess.Write); //Create a new texfile 
-                    fileStream.Close(); //Close the file, so that other methods can acces it 
-                } 
-            } 
+            else if (Directory.Exists(backupFolder)) 
+            {
+                File.Move(textFile, backupFolder + "/" + textFile + "-backup.txt");
+                FileStream fileStream = new FileStream(textFile, FileMode.Create, FileAccess.Write); //Create a new texfile
+                fileStream.Close(); //Close the file, so that other methods can acces it 
         }
 
+        /// <summary>
+        /// Method for radio button selector. Displays required fields for diferent types of motor Vehicles
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void VehicleTypeChange(object sender, EventArgs e) //Method for radio button selector. Displays required fileds for diferent types of motor Vehicles
         {
             if (rbTruck.Checked)
@@ -81,7 +80,12 @@ namespace DMV_GUI
                 customLabel04.Text = "Driver has licence?";
             }
         }
-
+        
+        /// <summary>
+        /// Button Click method. Creates objects, puts them in our array, then displays them in log as well as stores them in out textfile
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void RegisterVehicleClick(object sender, EventArgs e) //Button Click method. Creates objects, puts them in our array, then displays them in log as well as stores them in out textfile
         {
             try
@@ -126,9 +130,8 @@ namespace DMV_GUI
                             using (StreamWriter writer = new StreamWriter(file))
                             {
                                 writer.WriteLine(m.show());
-                                writer.Close();
+                                
                             }
-                            file.Close();
                         }
 
                     }
@@ -137,18 +140,28 @@ namespace DMV_GUI
             }
             catch(Exception)
             {
-                MessageBox.Show("Please input MAX WEIGHT");                           
+                MessageBox.Show("Please input MAXIMUM WEIGHT");                           
             }
 
         }
         
+        /// <summary>
+        /// Get from textfile and display in Richtextbox
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ShowLastVehicleFromFile(object sender, EventArgs e) //Get from textfile and display in Richtextbox
         {
             var lines = File.ReadLines(textFile); 
             string line = lines.Last(); 
             rtLog.AppendText(line + "\n\n");
         }
-
+        
+        /// <summary>
+        /// Sort all vehicles from list
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void sortButton_Click(object sender, EventArgs e)
         {
             vehicleList.Sort();
